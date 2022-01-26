@@ -67,16 +67,16 @@ export default function IconMenu() {
           {
             menudata.map((item,i) => {
               return(
-              <Link key={`key-${item[0]}-${i}`} href={item[0]}>
-              <SelectMenuItem href={item[0]}>
-                {item[3] && (
-                  <ListItemIcon>
-                    <i className={`${item[2]} ${item[3]}`} />
-                  </ListItemIcon>
-                )}
-                <ListItemText>{item[1]}</ListItemText>
-              </SelectMenuItem>
-            </Link>
+                <Link key={`key-${item[0]}-${i}`} href={item[0]}>
+                  <SelectMenuItem href={item[0]}>
+                    {item[3] && (
+                      <ListItemIcon>
+                        <i className={`${item[2]} ${item[3]}`} />
+                      </ListItemIcon>
+                    )}
+                    <ListItemText>{item[1]}</ListItemText>
+                  </SelectMenuItem>
+                </Link>
             )})
           }
         <Divider />

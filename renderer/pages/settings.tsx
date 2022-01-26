@@ -26,7 +26,7 @@ import { dayStringFormatter, monthStringFormatter } from '../utils/dateHelpers';
 
 import { add as pickerAdd, remove as pickerRemove} from "../redux/calcPickerSettings/slice";
 
-
+import {isBrowser} from '../utils/isBrowser'
 
 
 const IndexPage = () => {
@@ -34,10 +34,11 @@ const IndexPage = () => {
   const dispatch = useAppDispatch()
   const [sourceDir, _sourceDir] = useState([])
   const [sourceFiles, _sourceFiles] = useState([])
-  useEffect(() => {
+  
+  if(isBrowser) {
     global.ipcRenderer.addListener('REQUEST_SYSTEM_RESPONSE_SOURCE_FILES', (_event, data?:[]) => _sourceFiles(data))
     global.ipcRenderer.addListener('REQUEST_SYSTEM_RESPONSE_SOURCE_DIR', (_event, data?:[]) => _sourceDir(data))
-  }, [])
+  }
 
   useEffect(() => {
     global.ipcRenderer.send('REQUEST_SYSTEM', 'SOURCE_DIR')

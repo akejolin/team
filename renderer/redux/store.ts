@@ -12,11 +12,13 @@ import {reducer as calcPickerSettings} from './calcPickerSettings/slice';
 import {reducer as system} from './system/slice';
 import {reducer as dataKeys} from './dataKeys/slice';
 import {reducer as constants} from './constants/slice';
+import {reducer as noteFilterPicker} from './noteFilterPicker/slice';
 import { createWrapper } from 'next-redux-wrapper';
 
 
 const reducer = combineReducers({
   yearPicker,
+  noteFilterPicker,
   empPicker,
   calcPickerSettings,
   system,

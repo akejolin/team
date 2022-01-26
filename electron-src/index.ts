@@ -20,6 +20,10 @@ import getExt from './utils/file.get-ext'
 
 import contextMenu from 'electron-context-menu'
 
+import startQueryData from './events/queryData'
+import startUpdateData from './events/updateData'
+//import { allowedNodeEnvironmentFlags } from 'process'
+
 let mainWindow:BrowserWindow
 
 // Prepare the renderer once the app is ready
@@ -129,7 +133,6 @@ app.on('ready', async () => {
       return Promise.resolve(out)
 
     } catch(error) {
-      console.log('Error, load and create translateData >> : ', error)
       throw new Error(`Error, load and create translateData : ${filePath}, ${error}`)
     }
   }
@@ -190,6 +193,44 @@ ipcMain.on('REQUEST_DATA', async (event: IpcMainEvent, dataSource:string) => {
     throw new Error(`error reading db file: ${filePath}, ${error}`)
   }
 })
+
+/*
+interface I_note {
+  year: Number,
+  date: string,
+  emp: string,
+  impact: number,
+  tags: string[],
+  comment: string,
+}
+
+
+
+
+ipcMain.on('REQUEST_FILTERED_DATA', async (event: IpcMainEvent, dataSource:string, needles:string[]) => {
+  const ext = getExt(dataSource)
+  const empKey = empKeys.find(key => dataSource.indexOf(key) > -1) 
+  let transformedDataSource = empKey ? dataSource.replace(empKey, whitelistedFiles[empKey]) : dataSource 
+  const filePath = `${dataStoragePath}${transformedDataSource.toLowerCase().replace(/_/g, '-')}${ext !== 'none' ? ext : '.txt'}`
+ 
+  try {
+    let rows:Array<string> = await readFileRowsInArray(`${filePath}`)
+    let result:Array<Array<number | string>> = rows.map((row:String) => {
+    let _arr = row.split(';').filter(r => r !== '')
+    let arr = _arr.map(str => Number(str) ? Number(str) : str)
+      return arr
+    }).filter(r => r.length > 0)
+    event.sender.send(`FILTERED_DATA_${dataSource}`, result)
+
+  } catch(error) {
+    throw new Error(`error reading db file: ${filePath}, ${error}`)
+  }
+})
+*/
+
+
+
+
 
 ipcMain.on('REQUEST_SYSTEM', async (event: IpcMainEvent, action:string) => {
 
@@ -256,3 +297,19 @@ ipcMain.on('OPEN_FILE_IN_OS', async (event: IpcMainEvent, file:string) => {
 })
 
 
+startQueryData()
+
+
+export interface model {
+  id: Number,
+  year?: Number,
+  date?: string,
+  emp?: string,
+  impact?: number,
+  tags?: string[],
+  comment?: string,
+}
+
+startUpdateData({
+  endPointId: 'NOTE',
+})

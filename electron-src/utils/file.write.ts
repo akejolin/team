@@ -11,3 +11,5 @@ export const writeFile = (file:string, data:string) => fs.writeFile(file, data, 
       throw new Error(err)
   }
 })
+
+export default writeFile

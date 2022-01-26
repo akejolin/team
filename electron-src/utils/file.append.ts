@@ -13,3 +13,4 @@ export const appendFile = (file:string, data:string) => new Promise((resolve, re
     resolve(data)
   })
 )
+export default appendFile

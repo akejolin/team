@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import MUILink from '@mui/material/Link';
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
 import Layout from '../components/Layout'
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -11,7 +11,10 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import FlexView from '../components/styledFlexView'
-import FileEditor from '../components/FileEditor'
+import Picker from '../components/Picker'
+import { set as empPickerSet } from "../redux/empPicker/slice";
+import { set as yearPickerSet } from "../redux/yearPicker/slice";
+import Editor from '../components/Editor'
 import {Card} from '../components/charts/cardDesign'
 import { 
   faComment,
@@ -24,35 +27,67 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { T_annotationDataSet, T_annotationRawData } from '../dataTypes/annotations';
 import { dayStringFormatter, monthStringFormatter } from '../utils/dateHelpers';
 
-import { add as pickerAdd, remove as pickerRemove} from "../redux/calcPickerSettings/slice";
+import { add as filterAdd, remove as filterRemove, reset as filterReset} from "../redux/noteFilterPicker/slice";
+import {isBrowser} from '../utils/isBrowser'
+import { getCurrentYear } from './../utils/dateHelpers'
 
-
-
+let filter = []
 
 const IndexPage = () => {
-  const picker = useAppSelector((state) => state.calcPickerSettings.latest)
+  const currentYear = useAppSelector((state) => state.yearPicker.value);
+ 
+  const empPicker = useAppSelector((state) => state.empPicker.value)
+  const noteFilter = useAppSelector((state) => state.noteFilterPicker.value)
+  filter = noteFilter
   const dispatch = useAppDispatch()
   const [sourceDir, _sourceDir] = useState([])
   const [sourceFiles, _sourceFiles] = useState([])
   const [tags, _tags] = useState([])
+  const [dataDisplayed, _dataDisplayed] = useState([])
+  const [dataDB, _dataDB] = useState([])
+  const [notes, _notes] = useState([])
+  const [showAddNewForm, _showAddNewForm] = useState(false)
+
+  interface I_note {
+    id: Number,
+    year: Number,
+    date: string,
+    emp: string,
+    impact: number,
+    tags: string[],
+    comment: string,
+  }
+
+  const updateFeed = () => {
+    global.ipcRenderer.send('REQUEST_QUERY_DATA', 'NOTES', filter)
+  }
+
   useEffect(() => {
+    dispatch(filterReset())
+    dispatch(filterAdd(global.dataKeys[empPicker]))
+  }, [empPicker])
+
+  useEffect(() => {
+    updateFeed()
+    filter = noteFilter
+  }, [noteFilter])
+
+  useEffect(() => { 
     global.ipcRenderer.addListener('REQUEST_SYSTEM_RESPONSE_SOURCE_FILES', (_event, data?:[]) => _sourceFiles(data))
     global.ipcRenderer.addListener('REQUEST_SYSTEM_RESPONSE_SOURCE_DIR', (_event, data?:[]) => _sourceDir(data))
-    //global.ipcRenderer.addListener('DATA_RESPONSE_SYSTEM_TAGS', (_event, data?:[]) => {
-    const __tags = global.tags.map(item => {  
-      return item
+    global.ipcRenderer.addListener('RESPONSE_QUERY_DATA_NOTES', (_event, data?:[]) => {
+      _dataDisplayed([...data])
     })
-    _tags(__tags)
-  }, [])
-
-
+    global.ipcRenderer.addListener('RESPONSE_UPDATE_DATA_NOTES_FEED', (_event) => {
+      updateFeed()
+    })
+    
+  },[])
+  
   useEffect(() => {
     global.ipcRenderer.send('REQUEST_SYSTEM', 'SOURCE_DIR')
     global.ipcRenderer.send('REQUEST_SYSTEM', 'SOURCE_FILES')
-    global.ipcRenderer.send('REQUEST_DATA', 'SYSTEM_TAGS')
   },[])
-  
-  
 
   const GridCon = Grid
   const StyledBox = styled(Box)(({ theme }) => ({
@@ -100,10 +135,41 @@ const IndexPage = () => {
     global.ipcRenderer.send('OPEN_FILE_IN_OS', file)
   }
 
-  console.log('tags: ', tags)
+  const FilterDisplayBox = styled(FlexView)(({ theme }) => ({
+    background: 'none', //'#25db23'
+  }))
+
+  const FilterDisplayChip = styled(Chip)(({ theme }) => ({
+    background: '#F95738',
+    '&:hover': {
+      background: "rgba(255, 255, 255,.7)",
+    }
+  }))
+
+  const addTag = (tag) => dispatch(filterAdd(tag))
+  const removeTag = (tag) => dispatch(filterRemove(tag))
+
+  const filterDisplay = () => (
+    <Grid item xs={12} sm={12}>
+      <FilterDisplayBox style={{ alignItems: 'flex-start', justifyContent: 'flex-start', flexDirection: 'row', padding: 8}}>
+        {noteFilter.map((t,ii) => (
+          <FilterDisplayChip key={`tags-${t}-${ii}`} label={t} variant="outlined" onClick={() => removeTag(t)} onDelete={() => removeTag(t)} />
+        ))}            
+      </FilterDisplayBox>
+    </Grid>
+  )
+
+  type I_noteKey = 'year' | 'date' |'emp' |'impact' |'tags' |'comment'
+  const updateData = (type:I_noteKey, id, value:string) => {
+    const formData:any = {
+      id: Number(id),
+      [type]: value,
+    }
+    global.ipcRenderer.send('REQUEST_UPDATE_DATA', 'NOTES', 'NOTES_FEED', formData)
+  }
 
   return (
-    <Layout title="Settings | Expenses App">
+    <Layout title="Notes | Team App">
       <Grid container spacing={4}>
         <Grid item xs={12} sm={9}>
           <FlexView style={{alignItems: 'flex-start', flexDirection: 'column'}}>
@@ -113,33 +179,104 @@ const IndexPage = () => {
                   Notes
               </h1>
             </StyledBox>
+            <IconButton
+              onClick={() => {_showAddNewForm(!showAddNewForm)}}
+            >
+              <AddIcon fontSize="medium" />
+            </IconButton>
           </FlexView>
         </Grid>
         <Grid item xs={12} sm={3}>
-          <FlexView style={{alignItems: 'center', justifyContent: 'flex-end', flexDirection: 'row'}}>
-            <div style={{width: '20%'}}>
-              
+          <FlexView style={{alignItems: 'right', justifyContent: 'flex-end', flexDirection: 'row'}}>
+          <div style={{width: '40%', marginRight:20}}>
+            <Picker
+              value={`${currentYear}`}
+              handleChange={(value:string) => dispatch(yearPickerSet(Number(value)))}
+              data={
+                [getCurrentYear,getCurrentYear-1, getCurrentYear-2].map(item => {
+                  return {
+                    key: `${item}`,
+                    value: `${item}`
+                  }
+                })
+              }
+            />
+            
+            </div>
+            <div style={{width: '40%', marginRight:20}}>
+              <Picker
+                value={empPicker}
+                handleChange={(value:string) => dispatch(empPickerSet(value))}
+                data={
+                  Object.keys(global.dataKeys).map(item => {
+                    return {
+                      key: `${global.dataKeys[item]}`,
+                      value: `${item}`
+                    }
+                  })
+                }
+              />
             </div>
           </FlexView>
         </Grid>
-      {sourceFiles.map(item => (
-        <Grid key={`file-box-${item}`} item xs={12} sm={12} md={9}>
-          <Card style={{padding:16}}>
-          <FlexView style={{justifyContent: 'space-between', flexDirection: 'row', paddingTop: 0}}>
-            <FlexView onClick={()=>dispatch(pickerAdd(item))} style={{cursor: 'pointer', alignItems: 'flext-start', justifyContent: 'flex-start', flexDirection: 'row', paddingTop: 0}}>
-              <FileDisplay><FontAwesomeIcon icon={faFile} /></FileDisplay>
-              <FileDisplay><span>{item}</span></FileDisplay>
-            </FlexView>
-            <FileDisplay style={{cursor: 'pointer'}} onClick={()=>openExternal(item)}><FontAwesomeIcon icon={faExternalLinkAlt} /></FileDisplay>
-          </FlexView>
-          <Divider style={{width:'100%'}} />
-          <FlexView style={{alignItems: 'flext-start', justifyContent: 'flex-start', flexDirection: 'row', paddingTop: 0}}>
-            {picker.find(f => f === item) && (<FileEditor file={item} />)}
-          </FlexView>
-          </Card>
-        </Grid>
-      ))}
+        
+        
+        {showAddNewForm && (
+          <div style={{padding: 20, width: '100%', maxWidth: 500, background: 'rgb(8, 16, 24)'}}>
+          <Editor 
+            dataType={'NOTES'}
+            formId={'NOTES_EDIT'}
+            update={(STATUS) => {
+              if (STATUS === 'SUCCESS'){ 
+                _showAddNewForm(false)
+                updateFeed()
+              } else {
+                _showAddNewForm(true)
+              }
+            }}
+          />
+        </div>
+        )}
+        
+        { filterDisplay() }
 
+      {
+      dataDisplayed.map((item:I_note, i:number) => (
+        <Grid key={`file-box-${item.emp}-${i}`} item xs={12} sm={12} md={9}>
+          <FlexView style={{alignItems: 'flex-start', justifyContent: 'flex-start', flexDirection: 'column', paddingBottom: 16}}>
+            <div contentEditable data-id={item.id} onBlur={(e)=>{
+              updateData(
+                'date',
+                e.target.getAttribute('data-id'),
+                e.target.innerText,
+              )
+              }}>
+              {item.date}
+            </div>
+            <div contentEditable data-id={item.id} onBlur={(e)=>{
+              updateData(
+                'comment',
+                e.target.getAttribute('data-id'),
+                e.target.innerText,
+              )
+              }}>
+                {item.comment}
+              </div>
+
+            <Divider style={{width: '100%'}} />
+            <FlexView style={{alignItems: 'left', justifyContent: 'flex-end', flexDirection: 'row',paddingTop: 20}}>
+              <Stack direction="row" spacing={1}>
+                {item.tags.map((t,ii) => (
+                  <Chip key={`tags-${t}-${ii}`} label={t} variant="outlined" onClick={() => addTag(t)} />
+                ))}
+              </Stack>                
+            </FlexView>
+          </FlexView>
+
+
+        </Grid>
+      ))
+      }
 
 
       </Grid>

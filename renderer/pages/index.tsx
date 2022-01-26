@@ -17,7 +17,7 @@ import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
-
+import { getCurrentYear } from './../utils/dateHelpers'
 
 import MonthlyLineCharts from '../components/charts/monthlyLineCharts'
 import { dataCostUnit, dataUsageUnit, I_dataSets, T_CostsDataSet, T_month } from '../dataTypes/costs'
@@ -30,35 +30,16 @@ import Picker from '../components/Picker'
 import { set as empPickerSet } from "../redux/empPicker/slice";
 import { set as yearPickerSet } from "../redux/yearPicker/slice";
 
-
-import {selectYearData, pickAndSumData } from '../components/utils/dataHelper'
-import { gatherData } from '../components/utils/dataTransform'
-
-
 import {numberWithCommas} from '../utils/thousendFormatter'
-import { getMonth, getCurrentYear } from './../utils/dateHelpers'
-import { totalDiffInProgressFromLastYear } from '../components/utils/calculations'
 
 import { 
-
-  faBolt,
-  faTint,
-  faBurn,
-  faWifi,
-  faTrashAlt,
-  faDollarSign,
-  faShieldAlt,
-  faTools,
-  faBroom,
-  faCashRegister,
   faUser,
-  faHeart,
-  //faFire as faBurn,
-  //faBurn as faBurn 
+  faHeart,  
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
+import {isBrowser} from '../utils/isBrowser'
 
 import { wrapper } from '../redux/store';
 import { set as setIsDev, testing } from '../redux/system/slice'
@@ -79,7 +60,6 @@ const IndexPage = () => {
 
   useEffect(() => {
     global.ipcRenderer.send('REQUEST_EMP', empPickerValue)
-
   },[empPickerValue])
 
   const GridCon = Grid

@@ -26,7 +26,6 @@ export const Charts = (props: Props) => {
   let [fileData, _fileData] = useState([])
 
   useEffect(() => {
-    console.log('DATA_RESPONSE_WEATHER')
     global.ipcRenderer.addListener('DATA_RESPONSE_WEATHER', (_event:any, data:[string, string, number][]) => {
       const transformedData = data.map((item) => {
         if (!Array.isArray(item)) return null;
