@@ -6,14 +6,19 @@ import appendToFile from '../utils/file.append'
 import findLatestId from '../utils/findLatestId'
 import { convertArrayToDatabaseRow } from '../utils/convertArrayToDatabaseRow'
 import { stringToArray } from '../utils/stringToArray'
-
+import shell from 'shelljs'
+import fs from 'fs'
 import { BaseModel } from '../events/models'
 
-import { exec } from 'child_process'
+
+//import { exec } from 'child_process'
 
 export interface IdataObject {
   [key: string]: string
 }
+
+export type FormAction = 'CREATE' | 'UPDATE' | 'DELETE'
+
 
 export default <T>({endPointId, roleModel}:{
   endPointId: String
@@ -63,7 +68,13 @@ const empKeys = ['emp0', 'emp1', 'emp2', 'emp3', 'emp4', 'emp5', 'emp6', 'emp7',
 const dataStoragePath = '/Users/jonaslinde/data/team/'
 let whitelistedFiles:IdataObject = {}
 
-ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, dataSource:string, receiverID, formData:Imodel) => {
+ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, dataSource:string, receiverID, formData:Imodel, action: FormAction) => {
+  
+  
+  if (!fs.existsSync(dataStoragePath)) {
+    await shell.mkdir('-p', dataStoragePath)
+  }
+  
   const ext = getExt(dataSource)
   const empKey = empKeys.find(key => dataSource.indexOf(key) > -1) 
   let transformedDataSource = empKey ? dataSource.replace(empKey, whitelistedFiles[empKey]) : dataSource 
@@ -71,6 +82,16 @@ ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, dataSource:string,
    
   let rows:Array<string> = []
   let result:Array<Array<string|number>> = []
+
+  for (const key in formData) {
+    if (typeof formData[key as keyof Imodel] === 'string') {
+      // @ts-ignore
+      formData[key as keyof Imodel] = formData[key as keyof Imodel].toString().replace(/\n/g, '¿') 
+    }
+  }
+
+
+
 
   try {
     rows = await readFileRowsInArray(`${filePath}`)
@@ -87,9 +108,15 @@ ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, dataSource:string,
     throw new Error(`error converting DB string row to array: ${filePath}, ${error}`)
   }
 
+  if (action !== 'DELETE' && Number(formData.id) < 0 || typeof formData.id === 'undefined') {
+    action = 'CREATE'
+  }
+
+
   try {
     // No id means new data
-    if (Number(formData.id) < 0 || typeof formData.id === 'undefined') {
+    //if (Number(formData.id) < 0 || typeof formData.id === 'undefined') {
+      if (action === 'CREATE') {
       const nextId = findLatestId(result.map(item => Number(item[0]))) + 1
       formData.id = nextId
       const output = fillDataRowObject(formData)
@@ -105,7 +132,6 @@ ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, dataSource:string,
   }
   
   try {
-
     let output:Imodel[] = result.map(item => {
       const convertArray = (value:string) => {
         const str = value ? value.toString() : ''
@@ -127,17 +153,23 @@ ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, dataSource:string,
       return obj as Imodel
 
     })
-    output = output.map(item => {
-      if (Number(item.id) === Number(formData.id)) {
-        return fillDataRowObject(formData, item)
-      } else {
-        return item
-      }
-    })
 
-    await writeToFile(`${filePath}`, convertArrayToDatabaseRow<Imodel>(output))
-
-    return event.sender.send(`RESPONSE_UPDATE_DATA_${receiverID}`, formData)
+    if (action === 'UPDATE') {
+      output = output.map(item => {
+        if (Number(item.id) === Number(formData.id)) {
+          return fillDataRowObject(formData, item)
+        } else {
+          return item
+        }
+      })
+      await writeToFile(`${filePath}`, convertArrayToDatabaseRow<Imodel>(output))
+      return event.sender.send(`RESPONSE_UPDATE_DATA_${receiverID}`, formData)
+    }
+    if (action === 'DELETE') {
+      output = output.filter(item => item.id !== formData.id)
+      await writeToFile(`${filePath}`, convertArrayToDatabaseRow<Imodel>(output))
+      return event.sender.send(`RESPONSE_UPDATE_DATA_${receiverID}`, {status: `Id: ${formData.id} was deleted.`})
+    }
 
   } catch(error) {
     throw new Error(`error updating DB string row: ${filePath}, ${error}`)

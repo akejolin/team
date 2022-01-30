@@ -38,6 +38,7 @@ ipcMain.on('REQUEST_QUERY_DATA', async (event: IpcMainEvent, dataSource:string, 
    
     try {
       let rows:Array<string> = await readFileRowsInArray(`${filePath}`)
+
       let result = rows.map((row:string) => {
       let _arr = row.split(';').filter(r => r !== '')
       let arr = _arr.map(str => Number(str) ? Number(str) : str)

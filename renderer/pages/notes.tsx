@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Layout from '../components/Layout'
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -165,8 +166,24 @@ const IndexPage = () => {
       id: Number(id),
       [type]: value,
     }
-    global.ipcRenderer.send('REQUEST_UPDATE_DATA', 'NOTES', 'NOTES_FEED', formData)
+    global.ipcRenderer.send('REQUEST_UPDATE_DATA', 'NOTES', 'NOTES_FEED', formData, 'UPDATE')
   }
+  const deleteData = (id:number) => {
+
+    console.log('id: ', id)
+    const formData:any = {
+      id: Number(id)
+    }
+    global.ipcRenderer.send('REQUEST_UPDATE_DATA', 'NOTES', 'NOTES_FEED', formData, 'DELETE')
+  }
+
+  let createNewLines = (text) => text.split('\n').map(i => {
+    return (
+    <React.Fragment>
+      <p>{i}</p>
+    </React.Fragment>
+    )
+  });
 
   return (
     <Layout title="Notes | Team App">
@@ -253,23 +270,29 @@ const IndexPage = () => {
               }}>
               {item.date}
             </div>
-            <div contentEditable data-id={item.id} onBlur={(e)=>{
+            <FlexView style={{justifyContent: 'space-between'}}>
+            <div style={{flexGrow:1}} contentEditable data-id={item.id} onBlur={(e)=>{
               updateData(
                 'comment',
                 e.target.getAttribute('data-id'),
                 e.target.innerText,
               )
               }}>
-                {item.comment}
+                {createNewLines(item.comment)}
               </div>
-
+              <IconButton data-id={item.id} onClick={() => {
+                deleteData(item.id as number)
+              }}>
+                <DeleteIcon fontSize="small" />
+              </IconButton> 
+            </FlexView>
             <Divider style={{width: '100%'}} />
             <FlexView style={{alignItems: 'left', justifyContent: 'flex-end', flexDirection: 'row',paddingTop: 20}}>
               <Stack direction="row" spacing={1}>
                 {item.tags.map((t,ii) => (
                   <Chip key={`tags-${t}-${ii}`} label={t} variant="outlined" onClick={() => addTag(t)} />
                 ))}
-              </Stack>                
+              </Stack>            
             </FlexView>
           </FlexView>
 

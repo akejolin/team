@@ -42,7 +42,8 @@
     "redux": "^4.1.2",
     "redux-devtools-extension": "^2.13.9",
     "redux-persist-electron-storage": "^2.1.0",
-    "redux-thunk": "^2.4.1"
+    "redux-thunk": "^2.4.1",
+    "shelljs": "^0.8.5"
   },
   "devDependencies": {
     "@types/next-redux-wrapper": "^3.0.0",
@@ -50,6 +51,7 @@
     "@types/react": "^16.9.9",
     "@types/react-dom": "^16.9.9",
     "@types/react-redux": "^7.1.20",
+    "@types/shelljs": "^0.8.11",
     "electron": "^13",
     "electron-builder": "^22.9.1",
     "next": "latest",

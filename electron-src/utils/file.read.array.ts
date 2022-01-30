@@ -13,7 +13,12 @@ export const readFileRowsInArray = async (file:string) => new Promise<Array<stri
   }
   let stringData = data.toString()
   stringData = stringData.replace(/\; /g, ';')
-  const arr = stringData.toString().replace(/\r\n/g,'\n').split('\n');
+  let arr = stringData.toString().replace(/\r\n/g,'\n').split('\n');
+
+  arr = arr.map((item: string) => item.replace(/¿/g, ' \n'))
+
+  //arr = arr.replace(/≠≠/g, '\n')
+
   return resolve(arr)
 }))
 
