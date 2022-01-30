@@ -6,41 +6,64 @@ import appendToFile from '../utils/file.append'
 import findLatestId from '../utils/findLatestId'
 import { convertArrayToDatabaseRow } from '../utils/convertArrayToDatabaseRow'
 import { stringToArray } from '../utils/stringToArray'
-export interface I_note {
-  id: Number,
-  year?: Number,
-  date?: string,
-  emp?: string,
-  impact?: number,
-  tags?: string[],
-  comment?: string,
-}
+
+import { BaseModel } from '../events/models'
+
+import { exec } from 'child_process'
+
 export interface IdataObject {
   [key: string]: string
 }
 
+export default <T>({endPointId, roleModel}:{
+  endPointId: String
+  roleModel: T
+}) => {
 
-const fillDataRowObject = (formData:I_note, item?:I_note, ) => ({
-  id: formData.id,
-  year: formData.date ? new Date(formData.date).getFullYear() : item ? item.year : 1970,
-  date: formData.date ? formData.date : item ? item.date : '1970-01-01',
-  emp: formData.emp ? formData.emp : item ? item.emp : '',
-  impact: formData.impact ? formData.impact : item ? item.impact : 3,
-  tags: formData.tags ? formData.tags : item ? item.tags : [],
-  comment: formData.comment ? formData.comment : item ? item.comment : '',
-})
+  type Imodel = BaseModel<T>  
+  
+  const model:Imodel = {
+    ...{id: -1},
+    ...roleModel,
+  }
 
-interface Iprops {
-  endPointId:string
-}
+  console.log(endPointId)
 
-export default ({endPointId}:Iprops) => {
+  const fillDataRowObject = (next:Imodel, prev?:Imodel, ):Imodel => {
+    let output:any = {}
+
+    Object.keys(model).forEach((key) => {
+      if (key === 'year' && typeof model['date' as keyof Imodel] === 'string') {
+        const dd:string|undefined = next['date' as keyof Imodel] ? next['date' as keyof Imodel].toString() : undefined
+        output[key] = dd ? new Date(dd).getFullYear() : prev ? prev[key as keyof Imodel] : model[key as keyof Imodel]
+      } else {
+        output[key] = next[key as keyof Imodel] ? next[key as keyof Imodel] : prev ? prev[key as keyof Imodel] : model[key as keyof Imodel]
+      }
+      
+    });
+
+    return output as Imodel
+
+  }
+  /*
+  }({
+    id: formData.id,
+    year: formData.date ? new Date(formData.date).getFullYear() : item ? item.year : 1970,
+    date: formData.date ? formData.date : item ? item.date : '1970-01-01',
+    emp: formData.emp ? formData.emp : item ? item.emp : '',
+    impact: formData.impact ? formData.impact : item ? item.impact : 3,
+    tags: formData.tags ? formData.tags : item ? item.tags : [],
+    comment: formData.comment ? formData.comment : item ? item.comment : '',
+  })
+  */
+
+
 
 const empKeys = ['emp0', 'emp1', 'emp2', 'emp3', 'emp4', 'emp5', 'emp6', 'emp7', 'emp8', 'emp9' , 'emp10', 'emp11', 'emp12', 'emp13', 'emp14', 'emp15', 'emp16', 'emp17', 'emp18', 'emp19']
 const dataStoragePath = '/Users/jonaslinde/data/team/'
 let whitelistedFiles:IdataObject = {}
 
-ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, dataSource:string, receiverID, formData:I_note) => {
+ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, dataSource:string, receiverID, formData:Imodel) => {
   const ext = getExt(dataSource)
   const empKey = empKeys.find(key => dataSource.indexOf(key) > -1) 
   let transformedDataSource = empKey ? dataSource.replace(empKey, whitelistedFiles[empKey]) : dataSource 
@@ -73,7 +96,7 @@ ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, dataSource:string,
       const target = []
       target.push(output)
 
-      await appendToFile(`${filePath}`, convertArrayToDatabaseRow<I_note>(target))
+      await appendToFile(`${filePath}`, convertArrayToDatabaseRow<Imodel>(target))
 
       return event.sender.send(`RESPONSE_UPDATE_DATA_${receiverID}`, output)
     }
@@ -83,32 +106,27 @@ ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, dataSource:string,
   
   try {
 
-    let output:I_note[] = result.map(item => {
+    let output:Imodel[] = result.map(item => {
+      const convertArray = (value:string) => {
+        const str = value ? value.toString() : ''
+        return stringToArray(str, ',', (array:string[]) => {
+          array.map((item:string) => item.replace(/ /g,''))
+          array = array.filter(ii => ii.length > 0)
+          return array
+        })
+      } 
 
-    const str = item[5] ? item[5].toString() : ''
-    let tags = stringToArray(str, ',', (array:string[]) => {
-      array.map((item:string) => item.replace(/ /g,''))
-      array = array.filter(ii => ii.length > 0)
-      return array
+      const obj:any = {}
+      Object.keys(model).forEach((key:string, i:number) => {
+        if (Array.isArray(model[key as keyof Imodel])) {
+          obj[key] = convertArray(item[i] as string)
+        }
+        obj[key] = item[i]
+      })
+    
+      return obj as Imodel
+
     })
-
- 
-    const test: Array<Object> = Object.keys(I_note).map(key => {
-      return { text: key, value: key }
-    });
-
-    console.log('test: ', test)
-
-    return {
-      id: Number(item[0]),
-      year: Number(item[1]),
-      date: item[2].toString(),
-      emp: item[3].toString(),
-      impact: Number(item[4]),
-      tags,
-      comment: item[6].toString(),
-    }})
-
     output = output.map(item => {
       if (Number(item.id) === Number(formData.id)) {
         return fillDataRowObject(formData, item)
@@ -117,7 +135,7 @@ ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, dataSource:string,
       }
     })
 
-    await writeToFile(`${filePath}`, convertArrayToDatabaseRow<I_note>(output))
+    await writeToFile(`${filePath}`, convertArrayToDatabaseRow<Imodel>(output))
 
     return event.sender.send(`RESPONSE_UPDATE_DATA_${receiverID}`, formData)
 

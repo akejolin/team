@@ -21,7 +21,8 @@ import getExt from './utils/file.get-ext'
 import contextMenu from 'electron-context-menu'
 
 import startQueryData from './events/queryData'
-import startUpdateData from './events/updateData'
+import startUpdateArrayData from './events/updateArrayData'
+import { NoteModel } from './events/models'
 //import { allowedNodeEnvironmentFlags } from 'process'
 
 let mainWindow:BrowserWindow
@@ -299,17 +300,14 @@ ipcMain.on('OPEN_FILE_IN_OS', async (event: IpcMainEvent, file:string) => {
 
 startQueryData()
 
-
-export interface model {
-  id: Number,
-  year?: Number,
-  date?: string,
-  emp?: string,
-  impact?: number,
-  tags?: string[],
-  comment?: string,
-}
-
-startUpdateData({
+startUpdateArrayData<NoteModel>({
   endPointId: 'NOTE',
+  roleModel: {
+    year: 1970,
+    date: '1970-01-01',
+    emp: '',
+    impact: 3,
+    tags: [],
+    comment: '',
+  },
 })
