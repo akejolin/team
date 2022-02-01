@@ -9,6 +9,7 @@ import prepareNext from 'electron-next'
 
 import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
 
+import {dataStoragePath} from './config/config'
 
 import readFileRowsInArray from './utils/file.read.array'
 //import readFileRowsIntoObject from './utils/file.read.object'
@@ -20,8 +21,8 @@ import getExt from './utils/file.get-ext'
 
 import contextMenu from 'electron-context-menu'
 
-import startQueryData from './events/queryData'
-import startUpdateArrayData from './events/updateArrayData'
+import startQueryData from './events/queryJson'
+import startUpdateArrayData from './events/updateArrayJson'
 import { NoteModel } from './events/models'
 //import { allowedNodeEnvironmentFlags } from 'process'
 
@@ -93,7 +94,6 @@ export interface IdataObject {
 }
 
 // Global scope variables
-const dataStoragePath = '/Users/jonaslinde/data/team/'
 global.dataSourcePath = dataStoragePath
 let whitelistedFiles:IdataObject = {}
 let empKeys = ['emp0', 'emp1', 'emp2', 'emp3', 'emp4', 'emp5', 'emp6', 'emp7', 'emp8', 'emp9' , 'emp10', 'emp11', 'emp12', 'emp13', 'emp14', 'emp15', 'emp16', 'emp17', 'emp18', 'emp19']
@@ -298,7 +298,8 @@ ipcMain.on('OPEN_FILE_IN_OS', async (event: IpcMainEvent, file:string) => {
 })
 
 
-startQueryData()
+
+startQueryData<NoteModel>({})
 
 startUpdateArrayData<NoteModel>({
   endPointId: 'NOTE',

@@ -15,8 +15,6 @@ export const readFileRowsInArray = async (file:string) => new Promise<Array<stri
   stringData = stringData.replace(/\; /g, ';')
   let arr = stringData.toString().replace(/\r\n/g,'\n').split('\n');
 
-  arr = arr.map((item: string) => item.replace(/¿/g, ' \n'))
-
   //arr = arr.replace(/≠≠/g, '\n')
 
   return resolve(arr)

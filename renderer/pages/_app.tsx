@@ -8,7 +8,9 @@ import { set as setDataKeys } from '../redux/dataKeys/slice'
 //import AppInMiddle from './app-in-middle'
 
 import './style.css'
-
+import './react-markdown-editor-lite-custom.css';           
+//import '@uiw/react-markdown-editor/markdown-editor.css';
+//import '@uiw/react-markdown-preview/markdown.css';
 
 function App({
   Component, pageProps,
@@ -19,6 +21,7 @@ function App({
   return (
     <React.Fragment>
       <Head>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css" />
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
       </Head>
       <Component {...pageProps} />

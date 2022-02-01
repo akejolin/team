@@ -2,6 +2,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { shell, Shell, ipcRenderer, IpcRenderer } from 'electron'
 import readFileRowsInArray from './utils/file.read.array'
+import {dataStoragePath} from './config/config'
 
 interface IdataKeys {
   [key: string]: string
@@ -21,7 +22,7 @@ declare global {
   }
   
 }
-const dataStoragePath = '/Users/jonaslinde/data/team/'
+
 const translateData = async (dataSource:string) => {
 
   const filePath =  dataSource// `${dataSource.toLowerCase().replace(/_/g, '-')}${ext === 'none' ? ext : ''}`

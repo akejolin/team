@@ -1,41 +1,49 @@
 import { ipcMain, IpcMainEvent } from 'electron'
 import getExt from '../utils/file.get-ext'
 import readFileRowsInArray from '../utils/file.read.array'
+import { stringToArray } from '../utils/stringToArray'
+import { BaseModel } from '../events/models'
+import {dataStoragePath} from '../config/config'
 
-
-export interface I_note {
-  id: Number,
-  year: Number,
-  date: string,
-  emp: string,
-  impact: number,
-  tags: string[],
-  comment: string,
-}
 export interface IdataObject {
   [key: string]: string
 }
 
-export default () => {
-
-const empKeys = ['emp0', 'emp1', 'emp2', 'emp3', 'emp4', 'emp5', 'emp6', 'emp7', 'emp8', 'emp9' , 'emp10', 'emp11', 'emp12', 'emp13', 'emp14', 'emp15', 'emp16', 'emp17', 'emp18', 'emp19']
-const dataStoragePath = '/Users/jonaslinde/data/team/'
-let whitelistedFiles:IdataObject = {}
-
-const filter = (stack:I_note[], needles:string[], cb:Function) => {
-  needles.forEach(needle => {
-    stack = stack.filter(stackItem => stackItem.tags.includes(needle))
-  })
-  cb(stack)
-}
+export type FormAction = 'CREATE' | 'UPDATE' | 'DELETE'
 
 
-ipcMain.on('REQUEST_QUERY_DATA', async (event: IpcMainEvent, dataSource:string, needles:string[]) => {
+export default <T>({endPointId, roleModel}:{
+  endPointId: String
+  roleModel: T
+}) => {
+
+  type Imodel = BaseModel<T>  
+  
+  const model:Imodel = {
+    ...{id: -1},
+    ...roleModel,
+  }
+
+  console.log(endPointId)
+
+  const empKeys = ['emp0', 'emp1', 'emp2', 'emp3', 'emp4', 'emp5', 'emp6', 'emp7', 'emp8', 'emp9' , 'emp10', 'emp11', 'emp12', 'emp13', 'emp14', 'emp15', 'emp16', 'emp17', 'emp18', 'emp19']
+  let whitelistedFiles:IdataObject = {}
+
+  const filter = (stack:Imodel[], needles:string[], cb:Function) => {
+    needles.forEach(needle => {
+      // @ts-ignore
+      stack = stack.filter(stackItem => stackItem.tags ? stackItem.tags.includes(needle) : false)
+    })
+    cb(stack)
+  }
+
+
+  ipcMain.on('REQUEST_QUERY_DATA', async (event: IpcMainEvent, dataSource:string, needles:string[]) => {
     const ext = getExt(dataSource)
     const empKey = empKeys.find(key => dataSource.indexOf(key) > -1) 
     let transformedDataSource = empKey ? dataSource.replace(empKey, whitelistedFiles[empKey]) : dataSource 
     const filePath = `${dataStoragePath}${transformedDataSource.toLowerCase().replace(/_/g, '-')}${ext !== 'none' ? ext : '.txt'}`
-   
+  
     try {
       let rows:Array<string> = await readFileRowsInArray(`${filePath}`)
 
@@ -45,34 +53,33 @@ ipcMain.on('REQUEST_QUERY_DATA', async (event: IpcMainEvent, dataSource:string, 
         return arr
       }).filter(r => r.length > 0)
 
-      const output:I_note[] = result.map(item => {
+      const output:Imodel[] = result.map(item => {
 
-        const str = item[5] ? item[5].toString() : ''
-        let tags = str.split(',').filter((ii:string) => ii !== '')
-        tags = tags.map(item => item.replace(/ /g,''))
-        tags = tags.filter(ii => ii.length > 0)
-
-        // Push employee username to tags
-        //tags.unshift(item[3].toString())
-
-        return {
-          id: Number(item[0]),
-          year: Number(item[1]),
-          date: item[2].toString(),
-          emp: item[3].toString(),
-          impact: Number(item[4]),
-          tags,
-          comment: item[6].toString(),
-        }
+        const convertArray = (value:string) => {
+          const str = value ? value.toString() : ''
+          return stringToArray(str, ',', (array:string[]) => {
+            array.map((item:string) => item.replace(/ /g,''))
+            array = array.filter(ii => ii.length > 0)
+            return array
+          })
+        } 
+        const obj:any = {}
+        Object.keys(model).forEach((key:string, i:number) => {
+          if (Array.isArray(model[key as keyof Imodel])) {
+            obj[key] = convertArray(item[i] as string)
+          } else if (typeof model[key as keyof Imodel] === 'string') {
+            obj[key] = item[i].toString().replace(/¿/g, ' \n')
+          } else  {
+            obj[key] = item[i]
+          }
+        })
+        return obj as Imodel
       })
       
-      let filteredResult: I_note[] = []
-      filter(output, needles, (d:I_note[]) => {
+      let filteredResult: Imodel[] = []
+      filter(output, needles, (d:Imodel[]) => {
         filteredResult = d
       })
-
-      
-
       event.sender.send(`RESPONSE_QUERY_DATA_${dataSource}`, filteredResult)
   
     } catch(error) {

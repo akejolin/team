@@ -9,6 +9,7 @@ import { styled } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
 import SideMenu from './sideMenu'
 import FlexView from '../components/flexView'
+import Notify from '../components/Notify'
 
 
 
@@ -61,6 +62,7 @@ const Layout = ({ children, title = 'Expenses App' }: Props) => {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <link rel="stylesheet" type="text/css" href="/css/font-awesome.all.min.css" />
       </Head>
+      <Notify />
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <FlexView style={{height:20}} />

@@ -11,6 +11,8 @@ export const convertArrayToDatabaseRow = <T>(input:T[]):string => {
     })
     output += `\n`
   })
+  // Replace all potential linebreaks
+  //output = output.replace(/\n/g, '¿')
   return output
 }
 export default convertArrayToDatabaseRow

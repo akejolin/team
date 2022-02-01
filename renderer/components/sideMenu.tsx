@@ -19,10 +19,14 @@ import MUILink from '@mui/material/Link';
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
+import { set as devModeSet } from "../redux/devMode/slice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 
 export default function IconMenu() {
   const router = useRouter()
+  const dispatch = useAppDispatch()
+  const devMode = useAppSelector((state) => state.devMode.value)
   const [menudata, _menudata] = useState([])
 
   const WhiteText = styled('div')(({ theme }) => ({
@@ -88,6 +92,14 @@ export default function IconMenu() {
             <ListItemText>Settings</ListItemText>
           </SelectMenuItem>
         </Link>
+        {global.isDev && (
+          <SelectMenuItem onClick={()=>dispatch(devModeSet(!devMode))}>
+            <ListItemIcon>
+              <i className={`fas fa-cogs`} />
+            </ListItemIcon>
+            <ListItemText>{devMode ? 'Disable' : 'Enable'} Dev Data</ListItemText>
+          </SelectMenuItem>
+        )}
       </MenuList>
   );
 }

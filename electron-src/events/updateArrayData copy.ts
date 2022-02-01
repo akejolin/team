@@ -8,7 +8,7 @@ import { convertArrayToDatabaseRow } from '../utils/convertArrayToDatabaseRow'
 import { stringToArray } from '../utils/stringToArray'
 
 import { BaseModel } from '../events/models'
-
+import {dataStoragePath} from '../config/config'
 export interface IdataObject {
   [key: string]: string
 }
@@ -58,7 +58,6 @@ export default <T>({endPointId, roleModel}:{
 
 
 const empKeys = ['emp0', 'emp1', 'emp2', 'emp3', 'emp4', 'emp5', 'emp6', 'emp7', 'emp8', 'emp9' , 'emp10', 'emp11', 'emp12', 'emp13', 'emp14', 'emp15', 'emp16', 'emp17', 'emp18', 'emp19']
-const dataStoragePath = '/Users/jonaslinde/data/team/'
 let whitelistedFiles:IdataObject = {}
 
 ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, dataSource:string, receiverID, formData:Imodel) => {

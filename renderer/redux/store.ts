@@ -13,6 +13,8 @@ import {reducer as system} from './system/slice';
 import {reducer as dataKeys} from './dataKeys/slice';
 import {reducer as constants} from './constants/slice';
 import {reducer as noteFilterPicker} from './noteFilterPicker/slice';
+import {reducer as devMode} from './devMode/slice';
+import {reducer as actionLog} from './actionLog/slice';
 import { createWrapper } from 'next-redux-wrapper';
 
 
@@ -24,6 +26,8 @@ const reducer = combineReducers({
   system,
   dataKeys,
   constants,
+  devMode,
+  actionLog,
 // This is where we add reducers.
 // Since we don't have any yet, leave this empty
 })
