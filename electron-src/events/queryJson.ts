@@ -3,7 +3,7 @@ import getExt from '../utils/file.get-ext'
 import { BaseModel } from '../events/models'
 import getItems from '../utils/json-db/get-items-db'
 import {dataStoragePath} from '../config/config'
-
+import {sortArray} from '../utils/sortArray'
 
 export interface IdataObject {
   [key: string]: string
@@ -39,6 +39,9 @@ export default <T>({}:{
   
     try {
       let rows:Imodel[] = await getItems<Imodel>(`${filePath}`, sortKey, needles)
+
+      // Sort after date
+      rows = sortArray<Imodel>(rows, 'date', 'desc')
 
       event.sender.send(`RESPONSE_QUERY_DATA_${receiverID}`, rows)
   

@@ -1,14 +1,14 @@
-import React, {useState, useEffect,} from 'react'
+import React, {useState, useEffect} from 'react'
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import Grid from '@mui/material/Grid';
-import Editor from '../../components/editorOnlyMD/Editor'
+
+
 import FlexView from '../../components/styledFlexView'
-import dynamic from 'next/dynamic';
+
 import MdEditor from 'react-markdown-editor-lite';
-import MarkdownIt from 'markdown-it';
-import hljs from 'highlight.js'
+import ReactMarkDown from '../markdown-handler'
+
 
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {add as actionLogAdd} from '../../redux/actionLog/slice'
@@ -24,22 +24,10 @@ interface Iprops{
   }
 }
 
-const mdParser = new MarkdownIt({
-  highlight: function (str, lang) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return '<pre class="hljs"><code>' +
-               hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-               '</code></pre>';
-      } catch (__) {}
-    }
 
-    return '<pre class="hljs"><code>' + mdParser.utils.escapeHtml(str) + '</code></pre>';
-  }
-})
 export const EditorWrapper = (props:Iprops) => {
   const devMode = useAppSelector((state) => state.devMode.value)
-  const [mdtext, _mdtext] = React.useState()
+  const [mdtext, _mdtext] = useState()
   const dispatch = useAppDispatch()
   useEffect(() => { 
 
@@ -101,8 +89,12 @@ export const EditorWrapper = (props:Iprops) => {
         </div>
       </FlexView>
       <div style={{overflow:'auto'}}>
-      <MdEditor value={mdtext} style={{ height: '600px' }} renderHTML={text => mdParser.render(text)} onChange={({ html, text }) => _mdtext(text)} />
-
+        <MdEditor
+          value={mdtext}
+          style={{ height: '600px' }}
+          renderHTML={text => <ReactMarkDown source={text} />}
+          onChange={({ text }) => _mdtext(text)}
+        />
       </div>
   </div>
   )

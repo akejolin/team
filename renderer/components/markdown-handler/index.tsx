@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown'
 import type {Options} from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 
-import code from "./codeblock";
+import CodeBlock from "./codeblock";
 import paragraph from "./paragraph";
 import image from "./image";
 import thematicBreak from "./hr";
@@ -16,27 +16,14 @@ export default (props: {
 }) => {
   useEffect(() => {})
 
-/*
-      components={{
-        code,
-        paragraph,
-        table,
-        tableRow,
-        tableCell,
-        tableBody,
-        tableHead,
-        image,
-        thematicBreak,
-      }}
-
-*/
-
-
   return (
     <ReactMarkdown
       remarkPlugins={[gfm, rehypeHighlight]}
       children={props.source}
-      skipHtml={true}  
+      skipHtml={false}
+      components={{
+        code: CodeBlock,
+      }}
     />
   )
 }

@@ -203,6 +203,8 @@
     overflow: auto
 }
 
+/*
+
 .custom-html-style {
     color: #fff;
 }
@@ -239,6 +241,8 @@
     margin: 8px 0
 }
 
+*/
+
 .custom-html-style a {
     color: #65a0ff
 }
@@ -250,7 +254,7 @@
 .custom-html-style strong {
     font-weight: 700
 }
-
+/*
 .custom-html-style ol, .custom-html-style ul {
     font-size: 14px;
     line-height: 28px;
@@ -349,6 +353,8 @@
     word-break: break-word;
     min-width: 60px
 }
+
+*/
 
 .rc-md-editor .drop-wrap {
     display: block;

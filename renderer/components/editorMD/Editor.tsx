@@ -1,30 +1,23 @@
-import React, {useState, useEffect, SetStateAction} from 'react'
+import React, {useState, useEffect} from 'react'
 import TextField from '@mui/material/TextField';
-import TextareaAutosize from '@mui/material/TextareaAutosize';
-import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
 import SaveIcon from '@mui/icons-material/Save';
-import CloseIcon from '@mui/icons-material/Close';
-import Slider from '@mui/material/Slider';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+
 import FlexView from '../../components/flexView';
 import Picker from '../../components/Picker'
-import Button from '@mui/material/Button';
-import Snackbar from '@mui/material/Snackbar';
+import {yyyymmdd} from '../../utils/yyyymmss';
 
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {add as actionLogAdd} from '../../redux/actionLog/slice'
 import type {Ilog} from '../../redux/actionLog/slice'
 
-import {isBrowser} from '../../utils/isBrowser'
-import {yyyymmdd} from '../../utils/yyyymmss';
 import MdEditor from 'react-markdown-editor-lite';
-import MarkdownIt from 'markdown-it';
-import hljs from 'highlight.js'
+import ReactMarkDown from '../markdown-handler'
+
 interface Iprops {
   update?:Function,
   dbid: number,
@@ -44,20 +37,6 @@ interface I_note {
   comment: string,
 }
 
-
-const mdParser = new MarkdownIt({
-  highlight: function (str, lang) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return '<pre class="hljs"><code>' +
-               hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-               '</code></pre>';
-      } catch (__) {}
-    }
-
-    return '<pre class="hljs"><code>' + mdParser.utils.escapeHtml(str) + '</code></pre>';
-  }
-})
 
 const Editor = (props:Iprops) => {
   const { settings } = props
@@ -147,24 +126,14 @@ const Editor = (props:Iprops) => {
         formData,
       }
     )
-    //global.ipcRenderer.send('REQUEST_APPEND_DATA', props.dataType, formData)
-    
-
-  }
-
-
-  function valuetext(value: number) {
-    return `${value}°C`;
   }
 
   const addFormTag = (value) => {
-
     if (!formDataTags.includes(value) && value !== 'Select') {
       const nextData = formDataTags
       !formDataTags.includes(value) ? nextData.push(value) : null
       _formDataTags([...nextData])
     }
-
   }
   const removeFormTag = (value) => {
     let nextData = []
@@ -239,13 +208,16 @@ const Editor = (props:Iprops) => {
         />
 
 */
-
-
   return (
     <FormControl sx={{ m: 1, width: '100%' }}>
     <FlexView style={{flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'left'}}>
       <div style={{width: '99%'}}>
-        <MdEditor value={formDataComment} style={{ height: '500px' }} renderHTML={text => mdParser.render(text)} onChange={({ html, text }) => _formDataComment(text)} />
+        <MdEditor
+          value={formDataComment}
+          style={{ height: '500px' }}
+          renderHTML={text => <ReactMarkDown source={text} />}
+          onChange={({ text }) => _formDataComment(text)}
+        />
       </div>
       <FlexView style={{width: '99%', flexDirection: 'row', justifyContent: 'space-between'}}>
       <div>
@@ -287,13 +259,9 @@ const Editor = (props:Iprops) => {
     </FlexView>
     </FormControl>
   )
-
-  
 }
 
 Editor.defaultProps = {
   update: () => {}
 }
-
-
 export default Editor

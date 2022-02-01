@@ -20,7 +20,8 @@ import { set as yearPickerSet } from "../redux/yearPicker/slice";
 import EditorMDWrapper from '../components/editorMD/wrapper'
 import EditorOnlyMDWrapper from '../components/editorOnlyMD/wrapper'
 import {Card} from '../components/charts/cardDesign'
-import {mdToComponent} from '../components/mdRenderer';
+//import {mdToComponent} from '../components/mdRenderer';
+import MdToComponent from '../components/markdown-handler';
 import DeleteDialog from '../components/Dialog'
 
 import { 
@@ -258,8 +259,6 @@ const IndexPage = () => {
           />
         )}
 
-
-
       <Grid container spacing={4}>
         <Grid item xs={12} sm={9}>
           <FlexView style={{alignItems: 'flex-start', flexDirection: 'column'}}>
@@ -330,9 +329,9 @@ const IndexPage = () => {
               ),
               _showMDEditor(true)
               }}>
-              <div>
-              {mdToComponent(item.comment)}
-              </div>  
+                <div>
+                  <MdToComponent source={item.comment} />
+                </div>  
               </div>
               <IconButton data-id={item.id} onClick={() => {
                 //deleteData(item.id as number)
