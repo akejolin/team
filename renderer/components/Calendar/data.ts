@@ -56,28 +56,26 @@ export const reddays = [
 ]
 
 export type IabsentTypes = 'SICK' |
-'SICK_HALF' | 'VAB' | 'VAB_HALF' | 'WORK_HOME' | 'WORK_HOME_HALF' | 'WORK_OFFICE' | 'WORK_OFFICE_HALF' |
+'SICK_HALF' | 'VAB' | 'VAB_HALF' | 'VOB' | 'VOB_HALF' | 'WORK_HOME' | 'WORK_HOME_HALF' | 'WORK_OFFICE' | 'WORK_OFFICE_HALF' |
 'HOLIDAY' | 'HOLIDAY_HALF' | 'LATE' | 'PARENTAL_LEAVE' | 'PARENTAL_LEAVE_HALF' | 'DAY_OFF' | 'LEAVE' | 'RED_DAY' | 'EXTERNAL_WORK'
 
 export type IabsentTypesArrayObject = { 
-  key: IabsentTypes, label: String 
+  key: IabsentTypes, label: String, isPrimary: Boolean 
 }
 export const absentTypes:IabsentTypesArrayObject[] = [
-  { key: "SICK", label: "Sjuk" },
-  { key: "SICK_HALF", label: "Sjuk halvdag" },
-  { key: "VAB", label: "Vabb" },
-  { key: "VAB_HALF", label: "Vabb halvdag" },
-  { key: "WORK_HOME", label: "Jobba hemma" },
-  { key: "WORK_HOME_HALF", label: "Jobba hemma halvdag" },
-  { key: "WORK_OFFICE", label: "Jobba kontoret" },
-  { key: "WORK_OFFICE_HALF", label: "Jobba kontoret halvdag" },
-  { key: "HOLIDAY", label: "Semester" },
-  { key: "HOLIDAY_HALF", label: "Semester halvdag" },
-  { key: "LATE", label: "Sen" },
-  { key: "PARENTAL_LEAVE", label: "Föräldraledig" },
-  { key: "PARENTAL_LEAVE_HALF", label: "Föräldraledig halvdag" },
-  { key: "DAY_OFF", label: "Ledig/flex" },
-  { key: "LEAVE", label: "Tjänstledig" },
-  { key: "EXTERNAL_WORK", label: "Externt jobb" },
-  { key: "RED_DAY", label: "Röd dag" }
+  { key: "SICK", label: "Sick", isPrimary: true  },
+  { key: "SICK_HALF", label: "Sick half day" , isPrimary: false},
+  { key: "VAB", label: "Vab", isPrimary: true},
+  { key: "VAB_HALF", label: "Vab half day" , isPrimary: false},
+  { key: "VOB", label: "Work and Vab", isPrimary: true},
+  { key: "VOB_HALF", label: "Work and Vab half day" , isPrimary: false},
+  { key: "WORK_OFFICE", label: "At Office" , isPrimary: true},
+  { key: "WORK_OFFICE_HALF", label: "At Office half day", isPrimary: false },
+  { key: "HOLIDAY", label: "Holiday" , isPrimary: true},
+  { key: "HOLIDAY_HALF", label: "Holiday half day", isPrimary: false },
+  { key: "PARENTAL_LEAVE", label: "Parental leave" , isPrimary: true},
+  { key: "PARENTAL_LEAVE_HALF", label: "Parental leave half day", isPrimary: false },
+  { key: "LEAVE", label: "On leave/flex" , isPrimary: true},
+  { key: "EXTERNAL_WORK", label: "External work" , isPrimary: true},
+  { key: "RED_DAY", label: "Red day" , isPrimary: true}
 ]

@@ -25,7 +25,6 @@ const requestData = (devMode) => {
 
 export const Calendar = (props: Props) => {
 
-  const dispatch = useAppDispatch()
   const devMode = useAppSelector((state) => state.devMode.value)
 
   const [currentIndex, _currentIndex] = useState(0)

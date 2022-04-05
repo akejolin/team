@@ -8,12 +8,9 @@
     margin-right: 20px;
 }
 
-
-
 .test {
     background: rgb(19, 34, 52);
 }
-
 
 a {
     color: #65a0ff
@@ -86,14 +83,8 @@ a:hover {
 
 
 
-
-
-
-
-
-
 .calendar-header {
-	font-family: 'Oleo Script', cursive;
+	
 	font-weight: normal;
 	font-size: 28px;
 	padding: 20px;
@@ -110,79 +101,55 @@ a:hover {
 #calendar-table {
 	padding: 0px;
 	margin: 0px;
-	border-top: 1px solid white;
-	border-right: 1px solid white;
-}
-#calender-body {
-	min-height: 600px;
+	border-top: 1px solid #3685da55;
+	border-right: 1px solid #3685da55;
 }
 
 #calendar-table td {
-	border-left: 1px solid white;
-	border-bottom: 1px solid white;
-	/*
-	padding: 10px 10px 10px 10px;
-	font-size: 12px;
-	*/
-	font-size: 12px;
-	
-	
+	border-left: 1px solid #3685da55;
+	border-bottom: 1px solid #3685da55;
+	font-size: 12px;	
 }
 #calendar-table tbody td {
 	cursor: pointer;
 }
-#calendar-table tbody td a{
-	color: white;
-	text-decoration:none;
-}
-#calendar-table tbody td a:hover{
-	color: white;
-	text-decoration:underline;
-}
+
 #calendar-table tbody td:hover {
 	background-color: #f1f1f1;
-	color: #0059b3;
+	color: #1d4063;
 }
+
+#calendar-table tbody td:hover button {
+	color: #1d4063;
+}
+
 .first {
 	padding-left: 8px;
 	text-align: left;
 	cursor: auto !important;
 }
 .first:hover {
-	background-color: #66b3ff !important;
+	background-color: #1d4063 !important;
 	color: white !important;
 }
 .table-header.first:hover {
-	background-color: #008ae6 !important;
+	background-color: #0b5587 !important;
 }
-
-#prevBtn, #nextBtn {
-	height: 50px;
-	margin: 10px;
-	cursor: pointer;
-}
-
-#prevBtn:hover, #nextBtn:hover {
-	opacity: 0.8;
-}
-
-#nextBtn {
-	-moz-transform: scale(-1, 1);
-	-webkit-transform: scale(-1, 1);
-	-o-transform: scale(-1, 1);
-	-ms-transform: scale(-1, 1);
-	transform: scale(-1, 1);
+.table-header {
+	text-align: center;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	color: #3685da55;
 }
 
 .S.weekday {
 	background-color: #054a8f;
-
 }
 .row-weekdays {
-	background-color: #05395c !important;
+	background-color: none;
 }
 .weekend {
-	background-color: #411350 !important;
+	background-color: #2e2b52 !important;
 }
 .RED_DAY {
 	background-color: #ae2424 !important;
@@ -190,51 +157,98 @@ a:hover {
 }
 .SICK {
 	background-color: #ffcc00 !important;
-	color: white !important;
+	color: #241d02 !important;
+}
+.SICK button{
+	color: #241d02  !important;
 }
 .SICK_HALF {
-	background-image: -webkit-linear-gradient(45deg, #3399ff 50%, #ffcc00 50%);
+	background-image: -webkit-linear-gradient(45deg, #0a1929 50%, #ffcc00 50%);
 	color: white !important;
+  border: 1px solid #16375b !important;
 }
 .VAB {
-	background-color: #cc9966 !important;
+	background-color: #704419 !important;
 	color: white !important;
 }
 .VAB_HALF {
-	background-image: -webkit-linear-gradient(45deg, #3399ff 50%, #cc9966 50%);
+	background-image: -webkit-linear-gradient(45deg, #0a1929 50%, #704419 50%);
+	color: white !important;
+  border: 1px solid #16375b !important;
+}
+.VAB button, .VAB_HALF button{
+	color: #ffffff  !important;
+}
+
+.VOB {
+	background-color: #705c19 !important;
 	color: white !important;
 }
+.VOB_HALF {
+	background-image: -webkit-linear-gradient(45deg, #0a1929 50%, #705c19 50%);
+	color: white !important;
+  border: 1px solid #16375b !important;
+}
+.VOB button, .VOB_HALF button{
+	color: #ffffff  !important;
+}
+
+/*
 .WORK_HOME {
 	background-color: #ff00ff !important;
 	color: white !important;
 }
 .WORK_HOME_HALF {
-	background-image: -webkit-linear-gradient(45deg, #3399ff 50%, #ff00ff 50%);
+	background-image: -webkit-linear-gradient(45deg, #0a1929 50%, #ff00ff 50%);
 	color: white !important;
 }
-.LATE {
-	background-color: #ff9900 !important;
+
+*/
+
+.WORK_OFFICE {
+	background-color: #990d99 !important;
 	color: white !important;
+}
+.WORK_OFFICE button, .WORK_OFFICE_HALF button{
+	color: #ffffff  !important;
+}
+.WORK_OFFICE_HALF {
+	background-image: -webkit-linear-gradient(45deg, #0a1929 50%, #990d99 50%);
+	color: white !important;
+}
+.WORK_OFFICE button, .WORK_OFFICE_HALF button{
+	color: #ffffff  !important;
 }
 .HOLIDAY {
-	background-color: #00cc00 !important;
+	background-color: #00cc0070 !important;
 	color: white !important;
 }
+.HOLIDAY button, .HOLIDAY_HALF button{
+	color: #ffffff  !important;
+}
 .HOLIDAY_HALF {
-	background-image: -webkit-linear-gradient(45deg, #3399ff 50%, #00cc00 50%);
+	background-image: -webkit-linear-gradient(45deg, #0a1929 50%, #00cc00 50%);
 	color: white !important;
+  border: 1px solid #16375b !important;
 }
 .PARENTAL_LEAVE {
 	background-color: #005CFF !important;
 	color: white !important;
 }
+.PARENTAL_LEAVE button, .PARENTAL_LEAVE_HALF button{
+	color: #ffffff  !important;
+}
 .PARENTAL_LEAVE_HALF {
-	background-image: -webkit-linear-gradient(45deg, #3399ff 50%, #005CFF 50%);
+	background-image: -webkit-linear-gradient(45deg, #0a1929 50%, #005CFF 50%);
 	color: white !important;
+  border: 1px solid #16375b !important; 
 }
 .LEAVE {
-	background-color: #00e6e6 !important;
+	background-color: #ff80bf !important;
 	color: white !important;
+}
+.LEAVE button, .LEAVE button{
+	color: #ffffff  !important;
 }
 .DAY_OFF {
 	background-color: #ff80bf !important;
@@ -244,19 +258,35 @@ a:hover {
 	background-color: #3a7459 !important;
 	color: white !important;
 }
-.TODAY {
-	border-left: solid 5px #e11818 !important;
+.EXTERNAL_WORK button{
+	color: #ffffff  !important;
 }
+.TODAY {
+	border-left: solid 2px #e118186e !important;
+  border-right: solid 2px #e118186e !important;
+}
+.table-header.TODAY {
+	border-top: solid 2px #e118186e !important;
+}
+.table-footer.TODAY {
+	border-bottom: solid 2px #e118186e !important;
+}
+
 .HEADER_HALF_DAY {
-	background-image: -webkit-linear-gradient(45deg, #008ae6 50%, #e11818 50%);
+	background-image: -webkit-linear-gradient(45deg, #0a1929 50%, rgb(56, 13, 13) 50%);
+	color: white !important;
 }
 .HEADER_RED_DAY {
-	background-color: #e11818 !important;
+	background-color: rgb(56, 13, 13)	 !important;
+	color: white !important;
+}
+.weekend.HEADER_RED_DAY {
+	background-color: rgb(40, 11, 50)	 !important;
 	color: white !important;
 }
 
 .row:hover{
-	background-color: #66b3ff;
+	background-color: #3685da48;
 }
 #infobox {
 	margin-top:20px;

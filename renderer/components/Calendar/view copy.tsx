@@ -1,14 +1,11 @@
 import React, {useState, ReactNode}  from 'react'
 import { styled } from '@mui/material/styles';
 import './date.extensions'
-import {absentTypes} from './data'
 import FlexView from '../styledFlexView' 
 import PopOverForm from './popover'
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import PopOver from '@mui/material/Popover';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -33,39 +30,6 @@ export const View = (props: Props) => {
   const devMode = useAppSelector((state) => state.devMode.value)
   const [popOverContent, _popOverContent] = useState([])
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-
-
-  const updateAbsentData = (data) => {           
-    _popOverContent([])
-    setAnchorEl(null)
-
-    let formData:any = {
-      id: data.absentId ? Number(data.absentId): -1,
-      name: global.dataKeys[data.personId],
-      date: data.stringDate,
-      type: data.absentType 
-    }
-    
-    let action;
-    if (data.absentType === 'NONE' && data.absentId) {
-      action = 'DELETE'
-    } else if (data.absentId) {
-      action = 'UPDATE'
-    } else {
-      action = 'CREATE'
-    }
-
-    global.ipcRenderer.send(
-      'REQUEST_UPDATE_ABSENT', 
-      {
-        dataSource: `${devMode ? 'dev/' : ''}CALENDAR`,
-        receiverID: 'ABSENT',
-        formData,
-        action  
-      }
-    )
-  }
-
 
   const tdWeekdays = props.dates.map((day) => (
     <td key={`Weekdays-${day.dateNumber}`}
@@ -143,26 +107,57 @@ export const View = (props: Props) => {
             </div>
           </FlexView>
         </FlexView>
-        <Menu
-          id="some-menu-id"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={()=>setAnchorEl(null)}
-          MenuListProps={{
-            'aria-labelledby': 'basic-button',
-          }}
-        >
-          <MenuItem onClick={() => updateAbsentData({
-              ...{ absentType: 'NONE'},
-              ...popOverContent[0]
-            })}>{'None'}</MenuItem>
-          {absentTypes.map(item => (
-            <MenuItem onClick={() => updateAbsentData({
-              ...{ absentType: item.key},
-              ...popOverContent[0]
-            })}>{item.label}</MenuItem>
-          ))}
-        </Menu>
+        {popOverContent.length > 0 && (
+          <PopOver
+            id='some-id'
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={()=>setAnchorEl(null)}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+          >
+            <PopOverForm
+              onChange={(data) => {
+                
+                _popOverContent([])
+                setAnchorEl(null)
+
+                let formData:any = {
+                  id: data.absentId ? Number(data.absentId): -1,
+                  name: global.dataKeys[data.personId],
+                  date: data.stringDate,
+                  type: data.absentType 
+                }
+                
+                let action;
+                if (data.absentType === 'NONE' && data.absentId) {
+                  action = 'DELETE'
+                } else if (data.absentId) {
+                  action = 'UPDATE'
+                } else {
+                  action = 'CREATE'
+                }
+
+                global.ipcRenderer.send(
+                  'REQUEST_UPDATE_ABSENT', 
+                  {
+                    dataSource: `${devMode ? 'dev/' : ''}CALENDAR`,
+                    receiverID: 'ABSENT',
+                    formData,
+                    action  
+                  }
+                )
+              }}
+              data={popOverContent}
+            />
+          </PopOver>
+        )}
       </FlexView>
     </Base>
   )

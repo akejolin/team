@@ -15,14 +15,9 @@ export const TheComponent = (props: Props) => {
       <FlexView
         style={{
           flexDirection: 'column',
-          backgroundColor: '#fff',
-          width: 200,
-          //minHeight: 200,
-          color: '#000',
+          padding: 16,
         }}
       >
-        <span id="selected-date"></span>
-        Absent:<br/>
         <select onChange={(e)=>{props.onChange({
           ...{ absentType: e.target.value},
           ...props.data[0]
@@ -31,9 +26,7 @@ export const TheComponent = (props: Props) => {
           <option key="none" value="NONE">None</option>
           {
             absentTypes.map(function(key,i) {
-
               const selected = key.key === props.data[0].absentValue
-
               return <option key={i} selected={selected} value={key.key}>{key.label}</option>
             })
           }
