@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import PositionedMenu from '../components/PositionedMenu';
 
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
@@ -37,11 +38,17 @@ import type {Ilog} from '../redux/actionLog/slice'
 import { T_annotationDataSet, T_annotationRawData } from '../dataTypes/annotations';
 import { dayStringFormatter, monthStringFormatter } from '../utils/dateHelpers';
 
-import { add as filterAdd, remove as filterRemove, reset as filterReset} from "../redux/noteFilterPicker/slice";
+import {
+  add as filterAdd,
+  remove as filterRemove,
+  reset as filterReset} 
+from "../redux/noteFilterPicker/slice";
 import {isBrowser} from '../utils/isBrowser'
 import { getCurrentYear } from './../utils/dateHelpers'
+import { borderRadius } from '@mui/material/node_modules/@mui/system';
 
 let filter = []
+let prevEmp = ''
 let deleteTarget = -1
 const IndexPage = () => {
   const currentYear = useAppSelector((state) => state.yearPicker.value);
@@ -59,6 +66,7 @@ const IndexPage = () => {
   const [editorDbId, _editorDbId] = useState(-1)
   const [showMDEditor, _showMDEditor] = useState(false)
   const [MDeditorDbId, _MDeditorDbId] = useState(-1)
+  const [addFilterMenuOpen, _addFilterMenuOpen] = useState(false)
 
   interface I_note {
     id: Number,
@@ -80,8 +88,12 @@ const IndexPage = () => {
   }
 
   useEffect(() => {
-    dispatch(filterReset())
+    //dispatch(filterReset())
+    filter = noteFilter
+    dispatch(filterRemove(global.dataKeys[prevEmp]))
     dispatch(filterAdd(global.dataKeys[empPicker]))
+
+    prevEmp = empPicker
   }, [empPicker])
 
   useEffect(() => {
@@ -122,53 +134,24 @@ const IndexPage = () => {
   
 
   const GridCon = Grid
-  const StyledBox = styled(Box)(({ theme }) => ({
+  const StyledBox = styled(FlexView)(({ theme }) => ({
     [theme.breakpoints.up('sm')]: {
       paddingTop: theme.spacing(1),
       paddingRight: theme.spacing(2)
     }
   }))
-  const StyledText = styled(Typography)(({ theme }) => ({
-    color: '#a1a1a1'
-  }))
 
-  const Body = styled(Typography)(({ theme }) => ({
-    paddingBottom: 16
-  }))
-  const IconBox = styled(FlexView)(({ theme }) => ({
-    fontSize: 40,
-    padding: '0px 20px 20px 20px',
-    width: 100,
-    alignItems: 'flex-start', justifyContent: 'flex-start', flexDirection: 'row'
-  }))
-  const FileDisplay = styled('span')(({ theme }) => ({
-    fontSize: 14,
-    paddingLeft: 10,
-    paddingBottom: 10,
-    color: theme.palette['primary'].main
-  }))
-  
-  
-
-  const YellowText = styled('span')(({ theme }) => ({
-    color: theme.palette['warning'].main
-  }))
-  const BlueText = styled('span')(({ theme }) => ({
-    color: theme.palette['info'].main
-  }))
-  const PurpleText = styled('span')(({ theme }) => ({
-    color: theme.palette['secondary'].main
-  }))
-  const GreenText = styled('span')(({ theme }) => ({
-    color: '#25db23'
-  }))
 
   const openExternal = (file) => {
     global.ipcRenderer.send('OPEN_FILE_IN_OS', file)
   }
 
   const FilterDisplayBox = styled(FlexView)(({ theme }) => ({
-    background: 'none', //'#25db23'
+    background: 'rgb(19, 34, 52)',
+    borderRadius: 20,
+    width: '100%',
+    overflow: 'auto',
+    lineBreak: 'anywhere',
   }))
 
   const FilterDisplayChip = styled(Chip)(({ theme }) => ({
@@ -182,8 +165,14 @@ const IndexPage = () => {
   const removeTag = (tag) => dispatch(filterRemove(tag))
 
   const filterDisplay = () => (
-    <Grid item xs={12} sm={12}>
+    <Grid item xs={12} sm={12} md={9}>
       <FilterDisplayBox style={{ alignItems: 'flex-start', justifyContent: 'flex-start', flexDirection: 'row', padding: 8}}>
+        <PositionedMenu
+          list={global.tags.map(item => ({key: item.tag, value: item.tag}))}
+          id={'filter-add'}
+          onChange={(value) => addTag(value)}
+          buttonText={'Filter +'}
+        />
         {noteFilter.map((t,ii) => (
           <FilterDisplayChip key={`tags-${t}-${ii}`} label={t} variant="outlined" onClick={() => removeTag(t)} onDelete={() => removeTag(t)} />
         ))}            
@@ -262,17 +251,15 @@ const IndexPage = () => {
       <Grid container spacing={4}>
         <Grid item xs={12} sm={9}>
           <FlexView style={{alignItems: 'flex-start', flexDirection: 'column'}}>
-            <StyledBox>
-              <StyledText variant="body2">&nbsp;</StyledText>
+            <StyledBox style={{justifyContent: 'flex-start'}}>
               <h1 style={{marginBottom: 0, marginTop: -5,}}>
                   Notes
               </h1>
+              <div style={{marginBottom:2, marginLeft:8}}>
+                <IconButton onClick={() => {_showAddNewForm(!showAddNewForm)}}><AddIcon fontSize="medium" /></IconButton>
+              </div>
             </StyledBox>
-            <IconButton
-              onClick={() => {_showAddNewForm(!showAddNewForm)}}
-            >
-              <AddIcon fontSize="medium" />
-            </IconButton>
+
           </FlexView>
         </Grid>
         <Grid item xs={12} sm={3}>
@@ -324,10 +311,11 @@ const IndexPage = () => {
             </div>
             <FlexView style={{justifyContent: 'space-between'}}>
             <div style={{flexGrow:1}} data-id={item.id} onClick={(e)=>{
-              _MDeditorDbId(
-                Number(item.id)
-              ),
-              _showMDEditor(true)
+              //_MDeditorDbId(
+              //  Number(item.id)
+              //),
+              //_showMDEditor(true)
+
               }}>
                 <div>
                   <MdToComponent source={item.comment} />

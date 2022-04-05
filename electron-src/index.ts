@@ -1,5 +1,5 @@
 // Native
-import path, { join } from 'path'
+import { join } from 'path'
 import { format } from 'url'
 
 // Packages
@@ -23,7 +23,7 @@ import contextMenu from 'electron-context-menu'
 
 import startQueryData from './events/queryJson'
 import startUpdateArrayData from './events/updateArrayJson'
-import { NoteModel } from './events/models'
+import { NoteModel, AbsentModel } from './events/models'
 //import { allowedNodeEnvironmentFlags } from 'process'
 
 let mainWindow:BrowserWindow
@@ -288,9 +288,11 @@ ipcMain.on('SAVE_FILE_DATA', async (event: IpcMainEvent, file:string, data:strin
   }
 })
 
-ipcMain.on('OPEN_FILE_IN_OS', async (event: IpcMainEvent, file:string) => {
+ipcMain.on('OPEN_FILE_IN_OS', async (event: IpcMainEvent, filepath:string) => {
   try {
-    shell.openPath(path.join(`${dataStoragePath}`, `${file}`));
+    console.log('OPEN_FILE_IN_OS. Forwarding and open: ', filepath)
+    shell.openExternal(filepath)
+    //shell.openPath(path.join(`${dataStoragePath}`, `${file}`));
   } catch(error) {
     event.sender.send(`BACKEND_ERROR`, error)
     throw new Error (`${error}`)
@@ -302,7 +304,7 @@ ipcMain.on('OPEN_FILE_IN_OS', async (event: IpcMainEvent, file:string) => {
 startQueryData<NoteModel>({})
 
 startUpdateArrayData<NoteModel>({
-  endPointId: 'NOTE',
+  endPointId: 'REQUEST_UPDATE_DATA',
   roleModel: {
     year: 1970,
     date: '1970-01-01',
@@ -311,4 +313,14 @@ startUpdateArrayData<NoteModel>({
     tags: [],
     comment: '',
   },
+})
+
+startUpdateArrayData<AbsentModel>({
+  endPointId: 'REQUEST_UPDATE_ABSENT',
+  roleModel: {
+    name: '',
+    date: '1970-01-01',
+    type: 'HOLIDAY'
+  },
+  
 })

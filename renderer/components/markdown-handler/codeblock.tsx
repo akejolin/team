@@ -21,7 +21,7 @@ const CodeBlock = ({node, inline, className, children, ...props}:Props) => {
       {...props}
     />
   ) : (
-    <code className={className} {...props}>
+    <code className={`code-in-line${className ? ` ${className}` : ''}`} {...props}>
       {children}
     </code>
   )

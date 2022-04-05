@@ -30,6 +30,9 @@ export const Slice = createSlice({
     reset: (state) => {
       state.value = []
     },
+    set: (state, action: PayloadAction<string[]>) => {
+      state.value = action.payload
+    },
   },
 })
 

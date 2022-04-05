@@ -17,6 +17,7 @@ import type {Ilog} from '../../redux/actionLog/slice'
 
 import MdEditor from 'react-markdown-editor-lite';
 import ReactMarkDown from '../markdown-handler'
+import PositionedMenu from '../../components/PositionedMenu';
 
 interface Iprops {
   update?:Function,
@@ -106,7 +107,7 @@ const Editor = (props:Iprops) => {
     const stringDate = new Date(formDataDate);
 
     const inputTags = formDataTags
-    inputTags.unshift(formDataEmp)
+    if (!inputTags.includes(formDataEmp)) inputTags.unshift(formDataEmp);
 
     const formData:I_note = {
       id: Number(formDataId),
@@ -156,25 +157,37 @@ const Editor = (props:Iprops) => {
     margin: 4,
   }))
   
-  const filterDisplay = (_formDataTags) => {
-
-
-    return (
-    <Grid item xs={12} sm={12}>
-      <FilterDisplayBox style={{ alignItems: 'flex-start', justifyContent: 'flex-start', flexDirection: 'row', padding: 8}}>
-        {_formDataTags.map((tag,ii) => (
-          <FilterDisplayChip key={`form-tags-${tag}-${ii}`} label={tag} variant="outlined" onClick={() => removeFormTag(tag)} onDelete={() => removeFormTag(tag)} />
-        ))}            
-      </FilterDisplayBox>
-    </Grid>
-  )
-  }
 
   const tagsDisplay = [...tags]
   tagsDisplay.unshift([
     'Select',
     'Add tag'
   ])
+
+
+  const filterDisplay = (_formDataTags) => {
+
+
+    return (
+
+      <FilterDisplayBox style={{ alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row', padding: 8}}>
+        <div style={{margin: '0px 8px 0px 0px'}}>
+          <PositionedMenu
+            list={tagsDisplay.map(item => ({key: item[1], value: item[1]}))}
+            id={'tag-add'}
+            onChange={(value) => addFormTag(value)}
+            buttonText={'Add +'}
+          />
+        </div>
+        {_formDataTags.map((tag,ii) => (
+          <FilterDisplayChip key={`form-tags-${tag}-${ii}`} label={tag} variant="outlined" onClick={() => removeFormTag(tag)} onDelete={() => removeFormTag(tag)} />
+        ))}            
+      </FilterDisplayBox>
+
+  )
+  }
+
+
 
 /*
         <Label>Id: {formDataId === -1 ? 'Not created yet' : formDataId}</Label>
@@ -208,6 +221,17 @@ const Editor = (props:Iprops) => {
         />
 
 */
+
+  function onImageUpload(file) {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = data => {
+        resolve(data.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
   return (
     <FormControl sx={{ m: 1, width: '100%' }}>
     <FlexView style={{flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'left'}}>
@@ -217,6 +241,8 @@ const Editor = (props:Iprops) => {
           style={{ height: '500px' }}
           renderHTML={text => <ReactMarkDown source={text} />}
           onChange={({ text }) => _formDataComment(text)}
+          onImageUpload={onImageUpload}
+          imageAccept={'.jpg,.jpeg,.gif,.png'}
         />
       </div>
       <FlexView style={{width: '99%', flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -230,23 +256,9 @@ const Editor = (props:Iprops) => {
           onChange={(e:React.ChangeEvent<{ value: unknown }>) => _formDataEmp(e.target.value)}
         />
       </div>
-
-      <div style={{margin: '16px 0px 0px 0px'}}>
-        <Picker
-          handleChange={(value:string) => addFormTag(value)}
-          data={
-            tagsDisplay.map(item => {
-              return {
-                key: `${item[1]}`,
-                value: `${item[1]}`
-              }
-            })
-          }
-        />
-      </div>
-      <div style={{margin: '16px 0px'}}>
+      <FlexView style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
         { filterDisplay(formDataTags) }
-      </div>
+      </FlexView>
       </FlexView>
       <FlexView style={{flexDirection: 'row', justifyContent: 'space-between'}}>
         <div>

@@ -31,9 +31,6 @@ export default <T>({endPointId, roleModel}:{
     ...{id: -1},
     ...roleModel,
   }
-
-  console.log(endPointId)
-
   const fillDataRowObject = (next:Imodel, prev?:Imodel, ):Imodel => {
     let output:any = {}
 
@@ -60,7 +57,7 @@ interface EventOptions {
   action?: 'CREATE' | 'UPDATE' | 'DELETE' | undefined
 }
 
-ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, {
+ipcMain.on(`${endPointId}`, async (event: IpcMainEvent, {
   dataSource,
   receiverID,
   formData,
@@ -93,8 +90,6 @@ ipcMain.on('REQUEST_UPDATE_DATA', async (event: IpcMainEvent, {
       action = 'UPDATE'
     }
   }
-
-  console.log('¿¿¿¿¿¿¿ action', action, formData)
 
   try {
       if (action === 'CREATE') {

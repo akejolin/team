@@ -73,6 +73,17 @@ export const EditorWrapper = (props:Iprops) => {
     )
   }
 
+  function onImageUpload(file) {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = data => {
+        resolve(data.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+
   return (
     <div style={{position: 'fixed', overflow:'auto',top: 0, left:0, zIndex: 10, padding: 20, width: '100%', height: '100vh', background: 'rgba(0,0,0,.8)'}}>
       <FlexView style={{height: 'auto', justifyContent: 'space-between'}}>
@@ -94,6 +105,8 @@ export const EditorWrapper = (props:Iprops) => {
           style={{ height: '600px' }}
           renderHTML={text => <ReactMarkDown source={text} />}
           onChange={({ text }) => _mdtext(text)}
+          onImageUpload={onImageUpload}
+          imageAccept={'.jpg,.jpeg,.gif,.png'}
         />
       </div>
   </div>

@@ -31,7 +31,6 @@ export default <T>({}:{
     sortKey='*',
     needles=[]
   }: EventOptions) => {
-    
     const ext = getExt(dataSource)
     const empKey = empKeys.find(key => dataSource.indexOf(key) > -1) 
     let transformedDataSource = empKey ? dataSource.replace(empKey, whitelistedFiles[empKey]) : dataSource 

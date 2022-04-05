@@ -90,7 +90,7 @@ const IndexPage = () => {
   }))
 
   const openExternal = (file) => {
-    global.ipcRenderer.send('OPEN_FILE_IN_OS', file)
+    global.ipcRenderer.send('OPEN_FILE_IN_OS', `${global.dataSourcePath}${file}`)
   }
 
   return (

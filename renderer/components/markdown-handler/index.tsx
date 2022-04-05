@@ -9,12 +9,25 @@ import CodeBlock from "./codeblock";
 import paragraph from "./paragraph";
 import image from "./image";
 import thematicBreak from "./hr";
+import link from "./link";
 import {table, tableRow, tableCell, tableBody, tableHead} from "./table";
 
 export default (props: {
   source: string
 }) => {
-  useEffect(() => {})
+  useEffect(() => {
+
+    const allLinks = document.querySelectorAll('.open-in-os')
+
+    for (var i = 0; i < allLinks.length; i++) {
+      allLinks[i].addEventListener('click', function(e) {  
+        e.preventDefault();
+        const href = allLinks[i].getAttribute('href')
+        global.ipcRenderer.send('OPEN_FILE_IN_OS', href)
+      });
+  }
+
+  })
 
   return (
     <ReactMarkdown
@@ -23,6 +36,10 @@ export default (props: {
       skipHtml={false}
       components={{
         code: CodeBlock,
+        a: link,
+        img: image,
+        table,
+        //tableRow, tableCell, tableBody, tableHead
       }}
     />
   )

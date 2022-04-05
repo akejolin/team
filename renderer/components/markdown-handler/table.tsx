@@ -5,7 +5,7 @@ function flatten(text, child) {
     : React.Children.toArray(child.props.children).reduce(flatten, text)
 }
 export const table = (props) => {
-  const table = React.createElement('table', {className: 'mdc-data-table__table'}, props.children)
+  const table = React.createElement('table', {className: 'md-table'}, props.children)
   const innerWrapper = React.createElement('div', {className: 'mdc-data-table__table-container'}, table)
   return React.createElement('div', {className: 'mdc-data-table helper-full-width'}, innerWrapper)
 }

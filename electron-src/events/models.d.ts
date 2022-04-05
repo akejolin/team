@@ -11,3 +11,8 @@ export interface NoteModel {
   tags?: string[],
   comment?: string,
 }
+export interface AbsentModel {
+  name: string,
+  date: string,
+  type: string,
+}

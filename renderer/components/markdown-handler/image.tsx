@@ -6,9 +6,9 @@ export default (props:{
 }) => {
 
   let attr = {
-    className: 'bmdc-image',
+    className: 'md-image',
     src: props.src,
-    style: {maxWidth: '100%'}
+    style: {width: '100%'}
   }
 
   return React.createElement('img', attr, props.children)
