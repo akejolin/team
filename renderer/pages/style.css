@@ -92,24 +92,12 @@ a:hover {
 
 
 
-
-#popover {
-	position: absolute;
-	z-index: 100;
-}
-
 .calendar-header {
 	font-family: 'Oleo Script', cursive;
 	font-weight: normal;
 	font-size: 28px;
 	padding: 20px;
 	margin: 0;
-	color: white;
-  }
-
-#calendar {
-	background-color: #3399ff;
-	width: 100%;
 	color: white;
 }
 
@@ -132,8 +120,13 @@ a:hover {
 #calendar-table td {
 	border-left: 1px solid white;
 	border-bottom: 1px solid white;
+	/*
 	padding: 10px 10px 10px 10px;
 	font-size: 12px;
+	*/
+	font-size: 12px;
+	
+	
 }
 #calendar-table tbody td {
 	cursor: pointer;
@@ -151,7 +144,7 @@ a:hover {
 	color: #0059b3;
 }
 .first {
-	width: 200px;
+	padding-left: 8px;
 	text-align: left;
 	cursor: auto !important;
 }
@@ -182,17 +175,17 @@ a:hover {
 }
 
 .S.weekday {
-	background-color: #0059b3;
+	background-color: #054a8f;
 
 }
 .row-weekdays {
-	background-color: #008ae6 !important;
+	background-color: #05395c !important;
 }
 .weekend {
-	background-color: #0059b3 !important;
+	background-color: #411350 !important;
 }
 .RED_DAY {
-	background-color: #e11818 !important;
+	background-color: #ae2424 !important;
 	color: white !important;
 }
 .SICK {
@@ -245,6 +238,10 @@ a:hover {
 }
 .DAY_OFF {
 	background-color: #ff80bf !important;
+	color: white !important;
+}
+.EXTERNAL_WORK {
+	background-color: #3a7459 !important;
 	color: white !important;
 }
 .TODAY {

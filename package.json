@@ -38,6 +38,7 @@
     "highlight.js": "^11.4.0",
     "html-react-parser": "^1.4.6",
     "markdown-it": "^12.3.2",
+    "material-ui-popup-state": "^2.0.0",
     "next-redux-wrapper": "^7.0.5",
     "next-remove-imports": "^1.0.6",
     "react": "^17.0.2",

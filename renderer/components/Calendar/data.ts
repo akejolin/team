@@ -7,6 +7,8 @@ export const HALF_DAYS = [
     { name: 'Kristehim', date: '2018-05-09' },
     { name: 'Nationaldagen', date: '2018-06-05' },
     { name: 'Alla helgona helgen', date: '2018-11-02' },
+    { name: 'Skärtorsdag', date: '2022-04-14' },
+    { name: 'Kristehim', date: '2022-05-25' },
   ]
 
 export const WEEKDAY = ['S','M','T','O','T','F','S']
@@ -42,11 +44,20 @@ export const reddays = [
   { name: 'Julafton', date: '2018-12-24' },
   { name: 'Juldagen', date: '2018-12-25' },
   { name: 'Annadag jul', date: '2018-12-26' },
+  { name: 'Långfredagen', date: '2022-04-15' },
+  { name: 'Påskafton', date: '2022-04-16' },
+  { name: 'Påskdagen', date: '2022-04-17' },
+  { name: 'Annadag påsk', date: '2022-04-18' },
+
+  { name: 'Första maj', date: '2022-05-01' },
+  { name: 'Kristi himmelsfärdsdag', date: '2022-05-26' },
+  { name: 'Sveriges nationaldag', date: '2022-06-06' },
+  { name: 'Midsommarafton', date: '2022-06-24' },
 ]
 
 export type IabsentTypes = 'SICK' |
 'SICK_HALF' | 'VAB' | 'VAB_HALF' | 'WORK_HOME' | 'WORK_HOME_HALF' | 'WORK_OFFICE' | 'WORK_OFFICE_HALF' |
-'HOLIDAY' | 'HOLIDAY_HALF' | 'LATE' | 'PARENTAL_LEAVE' | 'PARENTAL_LEAVE_HALF' | 'DAY_OFF' | 'LEAVE' | 'RED_DAY'
+'HOLIDAY' | 'HOLIDAY_HALF' | 'LATE' | 'PARENTAL_LEAVE' | 'PARENTAL_LEAVE_HALF' | 'DAY_OFF' | 'LEAVE' | 'RED_DAY' | 'EXTERNAL_WORK'
 
 export type IabsentTypesArrayObject = { 
   key: IabsentTypes, label: String 
@@ -67,5 +78,6 @@ export const absentTypes:IabsentTypesArrayObject[] = [
   { key: "PARENTAL_LEAVE_HALF", label: "Föräldraledig halvdag" },
   { key: "DAY_OFF", label: "Ledig/flex" },
   { key: "LEAVE", label: "Tjänstledig" },
+  { key: "EXTERNAL_WORK", label: "Externt jobb" },
   { key: "RED_DAY", label: "Röd dag" }
 ]

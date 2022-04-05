@@ -2,8 +2,11 @@ import React, {useState, ReactNode}  from 'react'
 import { styled } from '@mui/material/styles';
 import './date.extensions'
 import FlexView from '../styledFlexView' 
-import PopOver from './popover'
+import PopOverForm from './popover'
 import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import PopOver from '@mui/material/Popover';
+import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useAppSelector } from "../../redux/hooks";
@@ -26,6 +29,7 @@ interface Props {
 export const View = (props: Props) => {
   const devMode = useAppSelector((state) => state.devMode.value)
   const [popOverContent, _popOverContent] = useState([])
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const tdWeekdays = props.dates.map((day) => {
     let todayMark = ""
@@ -56,17 +60,23 @@ export const View = (props: Props) => {
 
           return (
           <td
-            onClick={() => _popOverContent([{
-              personId: person.id,
-              stringDate: date.dateString,
-              absentValue: ABSENT?.type,
-              absentId: ABSENT ? Number(ABSENT?.id) : undefined
-            }])}
             key={`person-td-${i}-${person.id}`}
             className={['person-date', 'table-body', `${ABSENT ? ABSENT.type : ''}`, 'weekday', date.weekday, date.weekdayType, todayMark].join(' ')}
-            style={{position: 'relative'}}
+            style={{position: 'relative', textAlign: 'center'}}
           >
-            <span>{date.dateNumber}</span>
+            <Button
+              style={{minWidth: 1}}
+              size="small"
+              onClick={(e) => {
+                setAnchorEl(e.currentTarget)
+                _popOverContent([{
+                  personId: person.id,
+                  stringDate: date.dateString,
+                  absentValue: ABSENT?.type,
+                  absentId: ABSENT ? Number(ABSENT?.id) : undefined
+                }])
+              }}
+            >{date.dateNumber}</Button>
           </td>
         )})
       }
@@ -106,9 +116,25 @@ export const View = (props: Props) => {
             <FlexView style={{flex: 'auto', backgroundColor: '#0059b3',height:'10%'}}>
               {popOverContent.length > 0 && (
                 <PopOver
+                  id='some-id'
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={()=>setAnchorEl(null)}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                  }}
+                >
+                <PopOverForm
                   onChange={(data) => {
                     
                     _popOverContent([])
+                    setAnchorEl(null)
+
                     let formData:any = {
                       id: data.absentId ? Number(data.absentId): -1,
                       name: global.dataKeys[data.personId],
@@ -135,8 +161,10 @@ export const View = (props: Props) => {
                       }
                     )
                     
+                    
 
                   }} data={popOverContent}/>
+                  </PopOver>
               )}
             </FlexView>
           </FlexView>

@@ -4,6 +4,7 @@ import {absentTypes} from './data'
 
 interface Props {
   data?: any,
+  position?: any
   onChange?(value:any): any
 }
 
@@ -15,8 +16,8 @@ export const TheComponent = (props: Props) => {
         style={{
           flexDirection: 'column',
           backgroundColor: '#fff',
-          width: 100,
-          minHeight: 200,
+          width: 200,
+          //minHeight: 200,
           color: '#000',
         }}
       >
