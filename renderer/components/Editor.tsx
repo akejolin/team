@@ -37,8 +37,6 @@ interface I_note {
   comment: string,
 }
 
-
-
 const Editor = (props:Iprops) => {
 
   const empPicker = useAppSelector((state) => state.empPicker.value)
@@ -51,9 +49,6 @@ const Editor = (props:Iprops) => {
   const [formDataImpact, _formDataImpact] = useState(3)
   const [formDataTags, _formDataTags] = useState([])
   const [formDataComment, _formDataComment] = useState('')
-
-
-
 
   useEffect(() => {
     global.ipcRenderer.addListener(`RESPONSE_UPDATE_DATA_${props.formId}`, (_event, data?:[]) => {
@@ -189,6 +184,7 @@ const Editor = (props:Iprops) => {
           placeholder="Employee"
           style={{width:'100%', background:'#081018', color: 'white', border:'none', fontSize:16}}
           value={formDataEmp}
+          // @ts-ignore: Unreachable code error
           onChange={(e:React.ChangeEvent<{ value: unknown }>) => _formDataEmp(e.target.value)}
         />
         <Label style={{width: '100%'}}>
@@ -200,6 +196,7 @@ const Editor = (props:Iprops) => {
           placeholder="Date"
           style={{width:'100%', background:'#081018', color: 'white', border:'none', fontSize:16}}
           value={formDataDate}
+          // @ts-ignore: Unreachable code error
           onChange={(e:React.ChangeEvent<{ value: unknown }>) => _formDataDate(e.target.value)}
         />
         <Label style={{width: '100%'}}>
@@ -216,6 +213,7 @@ const Editor = (props:Iprops) => {
           marks
           min={1}
           max={5}
+          // @ts-ignore: Unreachable code error
           onChange={(e:React.ChangeEvent<{ value: unknown }>) => _formDataImpact(e.target.value)}
         />
       </div>
@@ -229,6 +227,7 @@ const Editor = (props:Iprops) => {
           placeholder="Comment"
           style={{width:'100%', background:'#081018', color: 'white', border:'none', fontSize:16}}
           value={formDataComment}
+          // @ts-ignore: Unreachable code error
           onChange={(e:React.ChangeEvent<{ value: unknown }>) => _formDataComment(e.target.value)}
         />
       </div>

@@ -6,7 +6,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Shell, IpcRenderer } from 'electron'
 
-interface IdataKeys {
+export interface IdataKeys {
   [key: string]: string
 }
 

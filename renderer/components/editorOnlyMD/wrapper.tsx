@@ -104,6 +104,7 @@ export const EditorWrapper = (props:Iprops) => {
           value={mdtext}
           style={{ height: '600px' }}
           renderHTML={text => <ReactMarkDown source={text} />}
+          // @ts-ignore: Unreachable code error
           onChange={({ text }) => _mdtext(text)}
           onImageUpload={onImageUpload}
           imageAccept={'.jpg,.jpeg,.gif,.png'}

@@ -1,7 +1,6 @@
-import { User } from '../interfaces'
 
 /** Dummy user data. */
-export const dataArray: User[] = [
+export const dataArray: any[] = [
   { id: 101, name: 'Alice' },
   { id: 102, name: 'Bob' },
   { id: 103, name: 'Caroline' },

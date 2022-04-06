@@ -2,11 +2,11 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Layout from '../components/Layout'
 import List from '../components/List'
-import { User } from '../interfaces'
+import { IdataKeys } from '../interfaces'
 import { findAll } from '../utils/sample-api'
 
 type Props = {
-  items: User[]
+  items: IdataKeys[]
   pathname: string
 }
 
@@ -27,7 +27,7 @@ const WithInitialProps = ({ items }: Props) => {
 }
 
 export async function getStaticProps() {
-  const items: User[] = await findAll()
+  const items: IdataKeys[] = await findAll()
 
   return { props: { items } }
 }

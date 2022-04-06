@@ -253,6 +253,7 @@ const Editor = (props:Iprops) => {
           placeholder="Employee"
           style={{width:'100%', maxWidth:300, background:'#081018', color: 'white', border:'none', fontSize:16}}
           value={formDataEmp}
+          // @ts-ignore: Unreachable code error
           onChange={(e:React.ChangeEvent<{ value: unknown }>) => _formDataEmp(e.target.value)}
         />
       </div>

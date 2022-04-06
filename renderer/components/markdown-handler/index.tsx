@@ -36,7 +36,9 @@ export default (props: {
       skipHtml={false}
       components={{
         code: CodeBlock,
+        // @ts-ignore: Unreachable code error
         a: link,
+        // @ts-ignore: Unreachable code error
         img: image,
         table,
         //tableRow, tableCell, tableBody, tableHead

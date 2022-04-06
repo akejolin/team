@@ -34,6 +34,6 @@ export const Slice = createSlice({
 })
 
 
-export const { set, testing } = Slice.actions
+
 export const  { reducer } = Slice
 export default reducer
